@@ -1,10 +1,11 @@
 import sympy as sp
 from sympy.parsing.sympy_parser import parse_expr
-from qiskit import QuantumCircuit
 import qiskit.circuit as qcc # qiskit circuit class
+
 
 def get_zero_param_gate_matrix(op_name: str) -> sp.Matrix:
     op_name = op_name.lower()
+    # Single Qubit
     if op_name == 'i':
         return sp.eye(2)
     elif op_name == 'h':
@@ -47,11 +48,60 @@ def get_zero_param_gate_matrix(op_name: str) -> sp.Matrix:
             [1, 0],
             [0, sp.exp(-sp.I * sp.pi / 4)]
         ])
+    # Two Qubit
+    if op_name in ('cx', 'cnot'):
+        return sp.Matrix([
+            [1, 0, 0, 0],
+            [0, 1, 0, 0],
+            [0, 0, 0, 1],
+            [0, 0, 1, 0]
+        ])
+    elif op_name == 'cz':
+        return sp.Matrix([
+            [1, 0, 0, 0],
+            [0, 1, 0, 0],
+            [0, 0, 1, 0],
+            [0, 0, 0, -1]
+        ])
+    elif op_name == 'swap':
+        return sp.Matrix([
+            [1, 0, 0, 0],
+            [0, 0, 1, 0],
+            [0, 1, 0, 0],
+            [0, 0, 0, 1]
+        ])
+    elif op_name == 'iswap':
+        return sp.Matrix([
+            [1, 0, 0, 0],
+            [0, 0, sp.I, 0],
+            [0, sp.I, 0, 0],
+            [0, 0, 0, 1]
+        ])
+    # Three Qubit
+    if op_name == 'ccx' or op_name == 'toffoli':
+        # Flip the target qubit if both control qubits are |1⟩
+        # |110⟩ -> |111⟩, |111⟩ -> |110⟩
+        mat = sp.eye(8)
+        mat[6,6] = 0
+        mat[7,7] = 0
+        mat[6,7] = 1
+        mat[7,6] = 1
+        return mat
+
+    elif op_name == 'cswap' or op_name == 'fredkin':
+        # Swap qubit 1 and 2 if qubit 0 is |1⟩
+        mat = sp.eye(8)
+        mat[5,5] = 0  # |101⟩
+        mat[6,6] = 0  # |110⟩
+        mat[5,6] = 1  # |101⟩ ↔ |110⟩
+        mat[6,5] = 1
+        return mat
     else:
         raise NotImplementedError(f"Zero-parameter gate '{op_name}' not supported.")
 
 def get_one_param_gate_matrix(op_name: str, theta: float|sp.Symbol) -> sp.Matrix:
     op_name = op_name.lower()
+    # Single Qubit
     if op_name == 'rx':
         return sp.Matrix([
             [sp.cos(theta / 2), -sp.I * sp.sin(theta / 2)],
@@ -72,6 +122,14 @@ def get_one_param_gate_matrix(op_name: str, theta: float|sp.Symbol) -> sp.Matrix
             [1, 0],
             [0, sp.exp(sp.I * theta)]
         ])
+    # Two Qubit
+    elif op_name == 'rzz':
+        return sp.diag(
+            sp.exp(-sp.I * theta / 2),
+            sp.exp(sp.I * theta / 2),
+            sp.exp(sp.I * theta / 2),
+            sp.exp(-sp.I * theta / 2)
+        )
     else:
         raise NotImplementedError(f"One-parameter gate '{op_name}' not supported.")
 
@@ -96,16 +154,3 @@ def gate_to_sympy_matrix(gate: qcc.Instruction) -> sp.Matrix:
         raise NotImplementedError(
             f"Gate '{op_name}' with {len(params)} parameter(s) is not yet supported."
         )
-
-def single_qubit_circuit_to_sympy(qc: QuantumCircuit) -> sp.Matrix:
-    """
-    Convert a single-qubit QuantumCircuit into its symbolic unitary matrix.
-    """
-    U: sp.Matrix = sp.eye(2)
-
-    for instruction in qc.data:
-        op: qcc.Instruction = instruction.operation 
-        gate_matrix = gate_to_sympy_matrix(op)
-        U = gate_matrix * U
-
-    return U
