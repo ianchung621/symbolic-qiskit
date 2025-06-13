@@ -133,6 +133,32 @@ def get_one_param_gate_matrix(op_name: str, theta: float|sp.Symbol) -> sp.Matrix
     else:
         raise NotImplementedError(f"One-parameter gate '{op_name}' not supported.")
 
+def get_three_param_gate_matrix(op_name: str, theta, phi, lam) -> sp.Matrix:
+    op_name = op_name.lower()
+
+    if op_name == 'u':
+        cos = sp.cos(theta / 2)
+        sin = sp.sin(theta / 2)
+        e_phi = sp.exp(sp.I * phi)
+        e_lam = sp.exp(sp.I * lam)
+        e_phi_lam = sp.exp(sp.I * (phi + lam))
+
+        return sp.Matrix([
+            [cos, -e_lam * sin],
+            [e_phi * sin, e_phi_lam * cos]
+        ])
+    
+    raise ValueError(f"Unsupported 3-parameter gate: {op_name}")
+
+def parse_param(p):
+    if isinstance(p, (int, float)):
+        return float(p)
+    elif isinstance(p, qcc.ParameterExpression):
+        expr_str = str(p).replace('[', '_').replace(']', '')
+        return parse_expr(expr_str)
+    else:
+        raise TypeError(f"Unsupported parameter type: {type(p)}")
+            
 def gate_to_sympy_matrix(gate: qcc.Instruction) -> sp.Matrix:
     op_name = gate.name
     params = gate.params
@@ -141,15 +167,11 @@ def gate_to_sympy_matrix(gate: qcc.Instruction) -> sp.Matrix:
         return get_zero_param_gate_matrix(op_name)
     elif len(params) == 1:
         theta = params[0]
-        if isinstance(theta, (int, float)):
-            theta = float(theta)
-        elif isinstance(theta, qcc.ParameterExpression):
-            expr_str = str(theta).replace('[', '_').replace(']', '')
-            theta = parse_expr(expr_str)
-        else:
-            raise TypeError(f"Unsupported parameter type: {type(theta)}")
-
+        theta = parse_param(theta)
         return get_one_param_gate_matrix(op_name, theta)
+    elif len(params) == 3:
+        theta, phi, lam = map(parse_param, params)
+        return get_three_param_gate_matrix(op_name, theta, phi, lam)
     else:
         raise NotImplementedError(
             f"Gate '{op_name}' with {len(params)} parameter(s) is not yet supported."
