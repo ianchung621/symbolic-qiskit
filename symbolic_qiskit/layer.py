@@ -103,14 +103,17 @@ def construct_layer_matrix(
 
     """
 
-    sorted_ops = sorted(qc_layer.operations, key=lambda op: -len(op.q_idxs))
-    active_qidxs = [idx for op in sorted_ops for idx in op.q_idxs]
-    active_gates = [op.sym_matrix for op in sorted_ops]
+    sorted_ops = sorted(qc_layer.operations, key=lambda op: -len(op.q_idxs)) # [cx:3,0] [ry:1]
+    # reversed the internal index to match qiskit little-endian ordering
+    active_qidxs = [idx for op in sorted_ops for idx in reversed(op.q_idxs)] # [3,0,1]
+    active_gates = [op.sym_matrix for op in sorted_ops] # [cx, ry]
 
     n_non_active = num_qubits - len(active_qidxs)
-    perm = [i for i in reversed(range(num_qubits)) if i not in active_qidxs] + active_qidxs
-    permuted_gates = [sp.eye(2)] * n_non_active + active_gates
-    print(perm)
-    print(permuted_gates)
-    U_p = sp.kronecker_product(*permuted_gates)
+    idle_qidxs = [i for i in range(num_qubits) if i not in active_qidxs] 
+    perm = active_qidxs + idle_qidxs # active [3,0,1] + idle [2]
+    permuted_gates = active_gates + [sp.eye(2)] * n_non_active # [cx, ry, I]
+    
+    # the perm maps 3 -> 0 0 -> 1 (cx) 1 -> 2 (ry) 2 -> 3 (I)
+    # by qiskit little-endian ordering U = U3 ⓧ U2 ⓧ U10, which is kron(I, ry, cx), i.e. reversed permuted_gates
+    U_p = sp.kronecker_product(*reversed(permuted_gates))
     return permute_unitary(U_p, perm)
