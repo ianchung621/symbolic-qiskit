@@ -19,7 +19,8 @@ class Operation:
     
     @property
     def sym_matrix(self):
-        return gate_to_sympy_matrix(self.op)
+        base_matrix = gate_to_sympy_matrix(self.op)
+        return base_matrix
 
 @dataclass
 class QCLayer:
@@ -59,7 +60,7 @@ def permute_unitary(U_p: sp.Matrix, perm: list[int]) -> sp.Matrix:
     """
     Args:
         U_p (sp.Matrix): Unitary matrix (2^n x 2^n) acting on permuted qubits.
-        perm (list[int]): Permutation with len n, maps perm[i] qubit to i
+        perm (list[int]): Permutation with len n, maps qubit i to perm[i]
 
     Returns:
         sp.Matrix: Logical qubit order unitary (P.T * U_p * P).
@@ -72,7 +73,7 @@ def permute_unitary(U_p: sp.Matrix, perm: list[int]) -> sp.Matrix:
     for i in range(dim):
         
         bitstr = format(i, f"0{n}b")
-        reordered_bits = [bitstr[perm[j]] for j in range(n)] 
+        reordered_bits = [bitstr[perm.index(j)] for j in range(n)] 
         idx = int("".join(reordered_bits), 2)
         index_map[i] = idx
         #print(i, bitstr, reordered_bits, idx)
@@ -104,16 +105,16 @@ def construct_layer_matrix(
     """
 
     sorted_ops = sorted(qc_layer.operations, key=lambda op: -len(op.q_idxs)) # [cx:3,0] [ry:1]
-    # reversed the internal index to match qiskit little-endian ordering
-    active_qidxs = [idx for op in sorted_ops for idx in reversed(op.q_idxs)] # [3,0,1]
+    active_qidxs = [idx for op in sorted_ops for idx in op.q_idxs] # [3,0,1]
     active_gates = [op.sym_matrix for op in sorted_ops] # [cx, ry]
 
     n_non_active = num_qubits - len(active_qidxs)
     idle_qidxs = [i for i in range(num_qubits) if i not in active_qidxs] 
-    perm = active_qidxs + idle_qidxs # active [3,0,1] + idle [2]
+    permuted_qidxs = active_qidxs + idle_qidxs # active [3,0,1] + idle [2]
     permuted_gates = active_gates + [sp.eye(2)] * n_non_active # [cx, ry, I]
     
-    # the perm maps 3 -> 0 0 -> 1 (cx) 1 -> 2 (ry) 2 -> 3 (I)
-    # by qiskit little-endian ordering U = U3 ⓧ U2 ⓧ U10, which is kron(I, ry, cx), i.e. reversed permuted_gates
-    U_p = sp.kronecker_product(*reversed(permuted_gates))
+    # kron(cx, ry, I) = cx(3,2) ⓧ ry(1) ⓧ I(0), permuted unitary matrix
+    U_p = sp.kronecker_product(*permuted_gates)
+    # the permute operater that transform [3,2,1,0] to [3,0,1,2]
+    perm = [permuted_qidxs.index(i) for i in reversed(range(num_qubits))] # [0,3,2,1]
     return permute_unitary(U_p, perm)
