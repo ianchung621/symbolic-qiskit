@@ -7,7 +7,7 @@ from qiskit.converters import circuit_to_dag
 import qiskit.circuit as qcc
 from qiskit import QuantumCircuit
 
-from .gate import gate_to_sympy_matrix
+from .standard_gates import gate_to_sympy_matrix
 
 @dataclass
 class Operation:
