@@ -73,6 +73,8 @@ GATE_REGISTRY = {
     'rzz': RZZGate,
 }
 
+BASIS_GATES = set(GATE_REGISTRY.keys())
+
 def gate_to_sympy_matrix(op: qcc.Instruction) -> sp.Matrix:
     name = op.name.lower()
     if name not in GATE_REGISTRY:
