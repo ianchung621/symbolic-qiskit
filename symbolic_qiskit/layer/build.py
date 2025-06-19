@@ -43,7 +43,7 @@ def circuit_to_layers(qc: QuantumCircuit) -> list[QCLayer]:
             if current_type not in (None, 'barrier'):
                 flush()
             current_type = 'barrier'
-            current_ops.append(Barrier(op, q_idxs))
+            current_ops.append(Barrier(op, q_idxs, op.label))
             continue
 
         elif op.name == "measure":

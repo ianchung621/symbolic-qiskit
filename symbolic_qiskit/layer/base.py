@@ -21,8 +21,7 @@ class StandardGate(Operation):
 
 @dataclass
 class Barrier(Operation):
-    def __repr__(self) -> str:
-        return f"({self.op.name}, q={self.q_idxs})"
+    label: str
 
 @dataclass
 class Measurement(Operation):
@@ -42,6 +41,20 @@ class StandardGateLayer(QCLayer):
 @dataclass
 class BarrierLayer(QCLayer):
     ops: list[Barrier]
+
+    @property
+    def is_collapsed(self) -> bool:
+        return len(self.ops) > 1
+    
+    @property
+    def label(self) -> str:
+        return self.ops[0].label
+
+    def __repr__(self):
+        if self.is_collapsed:
+            return f"BarrierLayer(label = {self.label}) (collapsed {len(self.ops)} barriers, only use the first barrier label)"
+        else:
+            return f"BarrierLayer(label = {self.label})"
 
 @dataclass
 class MeasurementLayer(QCLayer):
