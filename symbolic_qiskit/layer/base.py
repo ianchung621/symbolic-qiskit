@@ -1,5 +1,7 @@
-from dataclasses import dataclass
-from typing import List
+from dataclasses import dataclass, field
+from typing import List, Tuple, Dict
+
+import sympy as sp
 import qiskit.circuit as qcc
 
 from ..gate import gate_to_sympy_matrix
@@ -59,3 +61,10 @@ class BarrierLayer(QCLayer):
 @dataclass
 class MeasurementLayer(QCLayer):
     ops: list[Measurement]
+
+@dataclass(frozen=True)
+class MeasurementBranch:
+    measured_bits: Tuple[int, ...]
+    prob: sp.Expr
+    state: sp.Matrix
+    clbit_results: Dict[int, int] = field(default_factory=dict)  # clbit_idx : measured value
