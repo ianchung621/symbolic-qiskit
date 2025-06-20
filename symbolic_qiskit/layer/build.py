@@ -1,6 +1,3 @@
-from dataclasses import dataclass
-from typing import List
-
 import qiskit.circuit as qcc
 from qiskit import QuantumCircuit
 
