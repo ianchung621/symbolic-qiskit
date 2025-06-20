@@ -1,5 +1,5 @@
 import sympy as sp
-from .base import ZeroParamGate
+from ..base import ZeroParamGate
 
 class iSwapGate(ZeroParamGate):
     def matrix(self):

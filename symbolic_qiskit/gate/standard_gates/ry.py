@@ -1,5 +1,5 @@
 import sympy as sp
-from .base import OneParamGate
+from ..base import OneParamGate
 
 class RYGate(OneParamGate):
     def matrix(self):

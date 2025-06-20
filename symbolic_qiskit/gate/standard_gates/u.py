@@ -1,6 +1,6 @@
 import sympy as sp
-from .base import OneParamGate, TwoParamGate, ThreeParamGate
-from .utils import sp_exp_i
+from ..base import OneParamGate, TwoParamGate, ThreeParamGate
+from ..utils import sp_exp_i
 
 class UGate(ThreeParamGate):
     def matrix(self):

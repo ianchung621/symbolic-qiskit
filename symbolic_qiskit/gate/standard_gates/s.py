@@ -1,34 +1,34 @@
 import sympy as sp
-from .base import ZeroParamGate
+from ..base import ZeroParamGate
 
-class TGate(ZeroParamGate):
+class SGate(ZeroParamGate):
     def matrix(self):
         return sp.Matrix([
             [1, 0],
-            [0, sp.exp(sp.I * sp.pi / 4)]
+            [0, sp.I]
         ])
 
-class TdgGate(ZeroParamGate):
+class SdgGate(ZeroParamGate):
     def matrix(self):
         return sp.Matrix([
             [1, 0],
-            [0, sp.exp(-sp.I * sp.pi / 4)]
+            [0, -sp.I]
         ])
 
-class CTGate(ZeroParamGate):
+class CSGate(ZeroParamGate):
     def matrix(self):
         return sp.Matrix([
             [1, 0, 0, 0],
             [0, 1, 0, 0],
             [0, 0, 1, 0],
-            [0, 0, 0, sp.exp(sp.I * sp.pi / 4)]
+            [0, 0, 0, sp.I]
         ])
 
-class CTdgGate(ZeroParamGate):
+class CSdgGate(ZeroParamGate):
     def matrix(self):
         return sp.Matrix([
             [1, 0, 0, 0],
             [0, 1, 0, 0],
             [0, 0, 1, 0],
-            [0, 0, 0, sp.exp(-sp.I * sp.pi / 4)]
+            [0, 0, 0, -sp.I]
         ])

@@ -1,5 +1,5 @@
 import sympy as sp
-from .base import OneParamGate
+from ..base import OneParamGate
 
 class RXGate(OneParamGate):
     def matrix(self):
