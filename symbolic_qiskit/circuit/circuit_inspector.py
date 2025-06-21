@@ -9,7 +9,7 @@ from .measurement_circuit import MeasurementCircuitBackend
 from .unitary_circuit import UnitaryCircuitBackend
 
 class CircuitInspector:
-    def __init__(self, qc: QuantumCircuit):
+    def __init__(self, qc: QuantumCircuit, simplify_on_build: bool = False):
         chunks = circuit_to_chunks(qc)
         self.has_measurement = any(isinstance(c, MeasurementChunk) for c in chunks)
         self.mode: Literal["unitary", "measurement"] = (
@@ -17,26 +17,27 @@ class CircuitInspector:
         )
 
         if self.mode == "unitary":
-            self.backend = UnitaryCircuitBackend(chunks, qc.num_qubits)
+            self.backend = UnitaryCircuitBackend(chunks, qc.num_qubits, simplify_on_build)
         else:
-            self.backend = MeasurementCircuitBackend(chunks, qc.num_qubits)
+            self.backend = MeasurementCircuitBackend(chunks, qc.num_qubits, simplify_on_build)
 
-    def statevector(self, label: str|None = None) -> sp.Matrix:
+    def statevector(self, label: str|None = None, simplify: bool = False) -> sp.Matrix:
         """
         Returns the symbolic statevector at the given barrier label.
 
         Args:
             label (str | None): Barrier label to query.
                 If None, return the final statevector of the circuit
+            simplify (bool): If True, simplify the result before returning.
 
         Returns:
             sympy.Matrix: Statevector at the specified barrier.
         """
         if self.mode != "unitary":
             raise RuntimeError("Cannot query `statevector()` on a circuit with measurement — use `branches()` instead.")
-        return self.backend.statevector(label)
+        return self.backend.statevector(label, simplify)
 
-    def branches(self, label: str|None = None) -> list[MeasurementBranch]:
+    def branches(self, label: str|None = None, simplify: bool = False) -> list[MeasurementBranch]:
         """
         Returns the measurement branches (list[MeasurementBranch]) at the given barrier label.
 
@@ -49,15 +50,16 @@ class CircuitInspector:
         Args:
             label (str | None): Barrier label to query.
                 If None, return the final branches of the circuit
+            simplify (bool): If True, simplify each branch before returning.
 
         Returns:
             list[MeasurementBranch]: branches at the specified barrier.
         """
         if self.mode != "measurement":
             raise RuntimeError("Circuit has no measurements — use `statevector()` instead.")
-        return self.backend.branches(label)
+        return self.backend.branches(label, simplify)
     
-    def unitary(self, label_start: str = None, label_end: str = None) -> sp.Matrix:
+    def unitary(self, label_start: str = None, label_end: str = None, simplify: bool = False) -> sp.Matrix:
         """
         Compute the symbolic unitary matrix between two barrier labels.
 
@@ -66,6 +68,7 @@ class CircuitInspector:
                 If None, the unitary is computed from the beginning of the circuit.
             label_end (str | None): The label of the ending barrier.
                 If None, the unitary is computed up to the end of the circuit.
+            simplify (bool): If True, return simplified unitary matrix.
 
         Returns:
             sympy.Matrix: The composed unitary matrix from `label_start` to `label_end`.
@@ -78,6 +81,17 @@ class CircuitInspector:
             Barrier layers with `label=None` cannot be used as start/end references.
 
         """
-        return self.backend.unitary(label_start, label_end)
+        return self.backend.unitary(label_start, label_end, simplify)
+    
+    def simplify(self) -> None:
+        """
+        Simplifies all symbolic states or branches in-place.
+
+        For unitary circuits, this simplifies all statevectors.
+        For measurement circuits, this simplifies all measurement branches.
+
+        Caches results to avoid repeated simplification.
+        """
+        return self.backend.simplify()
 
 

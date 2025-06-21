@@ -4,13 +4,15 @@ from .base import Chunk, BarrierLayer, StandardGateChunk, MeasurementChunk
 
 class CircuitBackend:
 
-    def __init__(self, chunks: list[Chunk|BarrierLayer], num_qubits: int):
+    def __init__(self, chunks: list[Chunk|BarrierLayer], num_qubits: int, simplify_on_build: bool):
         self.chunks = chunks
         self.num_qubits = num_qubits
         self.label_to_idx: dict[str, int] = self._build_label_index()
         self.chunk_matrices: list[sp.Matrix | None] = [
             chunk.get_matrix(num_qubits) if isinstance(chunk, StandardGateChunk) else None
             for chunk in chunks]
+        
+        self.simplify_on_build = simplify_on_build
 
     def _build_label_index(self) -> dict[str, int]:
         label_map = {}
@@ -34,7 +36,7 @@ class CircuitBackend:
             )
         return self.label_to_idx[label]
     
-    def unitary(self, start: str | None = None, end: str | None = None) -> sp.Matrix:
+    def unitary(self, start: str | None, end: str | None, simplify: bool) -> sp.Matrix:
         if start is None:
             start_idx = 0
         else:
@@ -49,9 +51,9 @@ class CircuitBackend:
             if isinstance(self.chunks[i], MeasurementChunk):
                 raise ValueError(f"Cannot compute unitary: measurement found: {self.chunks[i]}")
 
-        U = sp.eye(2 ** self.num_qubits)
+        U: sp.Matrix = sp.eye(2 ** self.num_qubits)
         for matrix in self.chunk_matrices[start_idx:end_idx]:
             if matrix is not None:
                 U = matrix @ U
 
-        return U
+        return U.applyfunc(sp.simplify) if simplify else U
