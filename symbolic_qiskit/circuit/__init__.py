@@ -1,1 +1,1 @@
-from .build import circuit_to_chunks
+from .circuit_inspector import CircuitInspector

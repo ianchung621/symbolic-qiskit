@@ -74,3 +74,15 @@ class MeasurementBranch:
     prob: sp.Expr
     state: sp.Matrix
     clbit_results: Dict[int, int] = field(default_factory=dict)  # clbit_idx : measured value
+
+    def simplify(self):
+        
+        new_prob = sp.simplify(self.prob)
+        new_state = self.state.applyfunc(sp.simplify)
+
+        return MeasurementBranch(
+            measured_bits=self.measured_bits,
+            prob=new_prob,
+            state=new_state,
+            clbit_results=self.clbit_results,
+        )
