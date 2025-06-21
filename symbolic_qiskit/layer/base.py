@@ -49,14 +49,20 @@ class BarrierLayer(QCLayer):
         return len(self.ops) > 1
     
     @property
-    def label(self) -> str:
-        return self.ops[0].label
+    def label(self) -> str | None:
+        for op in self.ops:
+            if op.label is not None:
+                return op.label
+        return None
 
     def __repr__(self):
-        if self.is_collapsed:
-            return f"BarrierLayer(label = {self.label}) (collapsed {len(self.ops)} barriers, only use the first barrier label)"
-        else:
+        if not self.is_collapsed:
             return f"BarrierLayer(label = {self.label})"
+        
+        if self.label is not None:
+            return f"BarrierLayer(label = {self.label}) (collapsed {len(self.ops)} barriers, only use the non-None first barrier label)"
+        else:
+            return f"BarrierLayer(label = None) (collapsed {len(self.ops)} barriers)"
 
 @dataclass
 class MeasurementLayer(QCLayer):

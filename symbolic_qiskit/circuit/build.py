@@ -1,7 +1,7 @@
 from qiskit import QuantumCircuit, transpile
 
-from .base import QCLayer, Chunk, StandardGateChunk, MeasurementChunk
-from ..layer import StandardGateLayer, BarrierLayer, MeasurementLayer, circuit_to_layers
+from .base import QCLayer, Chunk, StandardGateChunk, MeasurementChunk, StandardGateLayer, BarrierLayer, MeasurementLayer
+from ..layer import circuit_to_layers
 from ..gate import BASIS_GATES
 
 def circuit_to_chunks(qc: QuantumCircuit) -> list[Chunk | BarrierLayer]:

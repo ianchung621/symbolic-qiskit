@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from ..layer import QCLayer, StandardGateLayer, MeasurementLayer
+from ..layer import QCLayer, StandardGateLayer, MeasurementLayer, BarrierLayer, MeasurementBranch
 
 class Chunk:
     layers: list[QCLayer]
