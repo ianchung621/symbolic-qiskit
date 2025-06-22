@@ -20,6 +20,9 @@ class CircuitInspector:
             self.backend = UnitaryCircuitBackend(chunks, qc.num_qubits, simplify_on_build)
         else:
             self.backend = MeasurementCircuitBackend(chunks, qc.num_qubits, simplify_on_build)
+    
+    def __repr__(self):
+        return f"<CircuitInspector mode={self.mode}, num_qubits={self.backend.num_qubits}, barrier_labels={self.backend.barrier_labels}, chunks={self.backend.chunks}>"
 
     def statevector(self, label: str|None = None, simplify: bool = False) -> sp.Matrix:
         """
@@ -93,5 +96,36 @@ class CircuitInspector:
         Caches results to avoid repeated simplification.
         """
         return self.backend.simplify()
+    
+    def report(self,
+        label: Literal["*", None] | str,
+        simplify: bool = False,
+        output: Literal["auto", "terminal", "notebook"] = 'auto',
+        notation: Literal["dirac", "column"] = "column",
+    ) -> None:
+        """
+        Display the symbolic quantum state at a given barrier, final output, or all barrier and final output (default).
+
+        Args:
+            label (str | Literal["*", None]): 
+                - A specific barrier label to report.
+                - "*" to report all barrier states and the final state.
+                - None to report only the final statevector.
+
+            simplify (bool):
+                Whether to simplify symbolic expressions before displaying them.
+
+            output (str):
+                - "auto": detect notebook or terminal automatically
+                - "terminal": plain-text output (e.g., for console or logs)
+                - "notebook": render using IPython LaTeX display
+
+            notation (str): 
+                State representation.
+                - "column": sympy Matrix form
+                - "dirac": ket-style superposition (e.g. a|000⟩ + b|111⟩)
+
+        """
+        self.backend.report(label, simplify, output, notation)
 
 

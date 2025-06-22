@@ -1,7 +1,9 @@
+from typing import Literal
 import sympy as sp
 
 from .base import Chunk, BarrierLayer, MeasurementBranch, StandardGateChunk, MeasurementChunk
 from .circuit_backend import CircuitBackend
+from .utils import _use_notebook, _display_expr
 
 class MeasurementCircuitBackend(CircuitBackend):
     def __init__(
@@ -81,3 +83,34 @@ class MeasurementCircuitBackend(CircuitBackend):
         for label in self.branches_at_barrier:
             self._simplify_branches(label)
         self._simplify_branches(None)
+    
+    def report(self,
+        label: Literal["*", None] | str,
+        simplify: bool,
+        output: Literal["auto", "terminal", "notebook"],
+        notation: Literal["dirac", "column"],
+    ) -> None:
+        if notation not in {"dirac", "column"}:
+            raise ValueError(f"Invalid notation: '{notation}'. Must be 'dirac' or 'column'.")   
+        use_nb = _use_notebook(output)
+        use_dirac = notation == "dirac"
+        if label == "*":
+            for label in [None] + self.barrier_labels:
+                self._report_branches(label, simplify, use_nb, use_dirac)
+        else:
+            self._report_branches(label, simplify, use_nb, use_dirac)
+    
+    def _report_branches(self, label: str|None, simplify: bool, use_nb: bool, use_dirac: bool):
+        if label is None:
+            print('- Final branches:')
+        else:
+            print(f'- Branches at {label}:')
+        branches = self.branches(label, simplify)
+        for branch in branches:
+            outcome = ''.join([str(bit) for bit in branch.measured_bits])
+            print(f'  * Measurement outcome: {outcome}')
+            print(f'    Classical bits results (clbit index: measured value): {branch.clbit_results}')
+            print('    Probability:')
+            _display_expr(branch.prob, use_nb, use_dirac, self.num_qubits)
+            print('    Statevector:')
+            _display_expr(branch.state, use_nb, use_dirac, self.num_qubits)

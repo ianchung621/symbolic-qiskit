@@ -1,7 +1,10 @@
+from typing import Literal
+
 import sympy as sp
 
 from .base import Chunk, BarrierLayer, StandardGateChunk
 from .circuit_backend import CircuitBackend
+from .utils import _use_notebook, _display_expr
 
 class UnitaryCircuitBackend(CircuitBackend):
     def __init__(
@@ -61,3 +64,28 @@ class UnitaryCircuitBackend(CircuitBackend):
         for label in self.state_at_barrier:
             self._simplify_state(label)
         self._simplify_state(None)
+    
+    def report(self, 
+        label: Literal["*", None] | str,
+        simplify: bool,
+        output: Literal["auto", "terminal", "notebook"],
+        notation: Literal["dirac", "column"],
+    ) -> None:
+        if notation not in {"dirac", "column"}:
+            raise ValueError(f"Invalid notation: '{notation}'. Must be 'dirac' or 'column'.")  
+        use_nb = _use_notebook(output)
+        use_dirac = notation == "dirac"
+        if label == "*":
+            for label in [None] + self.barrier_labels:
+                self._report_state(label, simplify, use_nb, use_dirac)
+        else:
+            self._report_state(label, simplify, use_nb, use_dirac)
+    
+    def _report_state(self, label: str|None, simplify: bool, use_nb: bool, use_dirac: bool):
+        if label is None:
+            print('- Final statevector:')
+        else:
+            print(f'- Statevector at {label}:')
+        _display_expr(self.statevector(label, simplify), use_nb, use_dirac, self.num_qubits)
+    
+        
