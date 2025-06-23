@@ -10,16 +10,19 @@ from .unitary_circuit import UnitaryCircuitBackend
 
 class CircuitInspector:
     def __init__(self, qc: QuantumCircuit, simplify_on_build: bool = False):
-        chunks = circuit_to_chunks(qc)
+        chunked_circuit = circuit_to_chunks(qc)
+        chunks = chunked_circuit.chunks
+        globel_phase = chunked_circuit.global_phase
+        
         self.has_measurement = any(isinstance(c, MeasurementChunk) for c in chunks)
         self.mode: Literal["unitary", "measurement"] = (
             "measurement" if self.has_measurement else "unitary"
         )
 
         if self.mode == "unitary":
-            self.backend = UnitaryCircuitBackend(chunks, qc.num_qubits, simplify_on_build)
+            self.backend = UnitaryCircuitBackend(chunks, qc.num_qubits, simplify_on_build, globel_phase)
         else:
-            self.backend = MeasurementCircuitBackend(chunks, qc.num_qubits, simplify_on_build)
+            self.backend = MeasurementCircuitBackend(chunks, qc.num_qubits, simplify_on_build, globel_phase)
     
     def __repr__(self):
         return f"<CircuitInspector mode={self.mode}, num_qubits={self.backend.num_qubits}, barrier_labels={self.backend.barrier_labels}, chunks={self.backend.chunks}>"

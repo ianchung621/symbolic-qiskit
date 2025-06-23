@@ -4,7 +4,12 @@ from .base import Chunk, BarrierLayer, StandardGateChunk, MeasurementChunk
 
 class CircuitBackend:
 
-    def __init__(self, chunks: list[Chunk|BarrierLayer], num_qubits: int, simplify_on_build: bool):
+    def __init__(self, 
+        chunks: list[Chunk|BarrierLayer],
+        num_qubits: int,
+        simplify_on_build: bool,
+        global_phase: float|sp.Expr
+    ):
         self.chunks = chunks
         self.num_qubits = num_qubits
         self.label_to_idx: dict[str, int] = self._build_label_index()
@@ -13,6 +18,7 @@ class CircuitBackend:
             for chunk in chunks]
         
         self.simplify_on_build = simplify_on_build
+        self.global_phase = global_phase
 
     def _build_label_index(self) -> dict[str, int]:
         label_map = {}

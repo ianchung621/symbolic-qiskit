@@ -11,8 +11,9 @@ class MeasurementCircuitBackend(CircuitBackend):
         chunks: list[Chunk | BarrierLayer],
         num_qubits: int,
         simplify_on_build: bool,
+        global_phase: float|sp.Expr
     ):
-        super().__init__(chunks, num_qubits, simplify_on_build)
+        super().__init__(chunks, num_qubits, simplify_on_build, global_phase)
         self.branches_at_barrier: dict[str, list[MeasurementBranch]] = {}
         self.branches_is_simplified: dict[str, bool] = {}
         
@@ -21,7 +22,7 @@ class MeasurementCircuitBackend(CircuitBackend):
 
     def evolve(self) -> list[MeasurementBranch]:
         psi = sp.zeros(2 ** self.num_qubits, 1)
-        psi[0] = 1
+        psi[0] = sp.exp(sp.I * self.global_phase)
         current_branches = [MeasurementBranch((), 1, psi, {})]
 
         for chunk, U_chunk in zip(self.chunks, self.chunk_matrices):

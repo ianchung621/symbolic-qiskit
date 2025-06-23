@@ -11,9 +11,10 @@ class UnitaryCircuitBackend(CircuitBackend):
         self, 
         chunks: list[Chunk | BarrierLayer],
         num_qubits: int,
-        simplify_on_build: bool
+        simplify_on_build: bool,
+        global_phase: float|sp.Expr
     ):
-        super().__init__(chunks, num_qubits, simplify_on_build)
+        super().__init__(chunks, num_qubits, simplify_on_build, global_phase)
         self.state_at_barrier: dict[str, sp.Matrix] = {}
         self.state_is_simplified: dict[str, bool] = {}
 
@@ -22,7 +23,7 @@ class UnitaryCircuitBackend(CircuitBackend):
 
     def evolve(self) -> sp.Matrix:
         psi: sp.Matrix = sp.zeros(2 ** self.num_qubits, 1)
-        psi[0] = 1
+        psi[0] = sp.exp(sp.I * self.global_phase)
 
         for chunk, U_chunk in zip(self.chunks, self.chunk_matrices):
             if isinstance(chunk, StandardGateChunk):

@@ -1,11 +1,17 @@
 import sympy as sp
 
 from dataclasses import dataclass
+from qiskit.circuit import ParameterExpression
 from ..layer import QCLayer, StandardGateLayer, MeasurementLayer, BarrierLayer, MeasurementBranch
 from ..layer import construct_layer_matrix, apply_measurement_layer
 
 class Chunk:
     layers: list[QCLayer]
+
+@dataclass
+class ChunkedCircuit:
+    chunks: list[Chunk | BarrierLayer]
+    global_phase: float | ParameterExpression
 
 @dataclass
 class StandardGateChunk(Chunk):

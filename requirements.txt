@@ -4,3 +4,4 @@ qiskit
 
 pytest
 pytest-cov
+hypothesis

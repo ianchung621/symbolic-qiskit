@@ -45,3 +45,13 @@ class ThreeParamGate(Gate):
         self.theta = parse_param(gate.params[0])
         self.phi = parse_param(gate.params[1])
         self.lam = parse_param(gate.params[2])
+
+class FourParamGate(Gate):
+    def __init__(self, gate: qcc.Instruction):
+        if len(gate.params) != 4 and len(gate.params) != 3:
+            raise ValueError(f"{gate.name} expected 3 or 4 parameters, got {len(gate.params)}")
+        super().__init__(gate)
+        self.theta = parse_param(gate.params[0])
+        self.phi = parse_param(gate.params[1])
+        self.lam = parse_param(gate.params[2])
+        self.gamma = parse_param(gate.params[3]) if len(gate.params) == 4 else 0
