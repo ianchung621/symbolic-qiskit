@@ -57,6 +57,8 @@ def circuit_to_layers(qc: QuantumCircuit) -> list[QCLayer]:
             current_type = 'gate'
             current_ops.append(StandardGate(op, q_idxs))
             active_q.update(q_set)
+        elif op.name == 'delay':
+            continue
         else:
             raise ValueError(f"Unsupported operation '{op.name}' in circuit, supported operations: {BASIS_GATES}")
 

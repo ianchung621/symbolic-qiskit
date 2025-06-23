@@ -1,5 +1,7 @@
+from qiskit.circuit.library import get_standard_gate_name_mapping
+
 from .i import IGate
-from .x import XGate, CXGate, CCXGate
+from .x import XGate, CXGate, CCXGate, RCCXGate, RC3XGate, C3SXGate
 from .y import YGate, CYGate
 from .z import ZGate, CZGate, CCZGate
 from .h import HGate, CHGate
@@ -23,6 +25,8 @@ from .rxx import RXXGate
 from .ryy import RYYGate
 from .rzz import RZZGate
 from .rzx import RZXGate
+from .xx_minus_yy import XXMinusYYGate
+from .xx_plus_yy import XXPlusYYGate
 
 
 GATE_REGISTRY = {
@@ -30,6 +34,9 @@ GATE_REGISTRY = {
     'x': XGate,
     'cx': CXGate,
     'ccx': CCXGate,
+    'rccx': RCCXGate,
+    'rcccx': RC3XGate,
+    'c3sx': C3SXGate,
     'y': YGate,
     'cy': CYGate,
     'z': ZGate,
@@ -75,7 +82,9 @@ GATE_REGISTRY = {
     'rxx': RXXGate,
     'ryy': RYYGate,
     'rzz': RZZGate,
-    'rzx': RZXGate
+    'rzx': RZXGate,
+    'xx_minus_yy': XXMinusYYGate,
+    'xx_plus_yy': XXPlusYYGate
 }
 
-BASIS_GATES = set(GATE_REGISTRY.keys())
+BASIS_GATES = set(GATE_REGISTRY.keys()) & set(get_standard_gate_name_mapping().keys())
