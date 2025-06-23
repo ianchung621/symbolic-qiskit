@@ -2,10 +2,10 @@ from qiskit import QuantumCircuit, transpile
 
 from .base import QCLayer, Chunk, ChunkedCircuit, StandardGateChunk, MeasurementChunk, StandardGateLayer, BarrierLayer, MeasurementLayer
 from ..layer import circuit_to_layers
-from ..gate import BASIS_GATES
+from ..gate import SUPPORTED_GATES
 
 def circuit_to_chunks(qc: QuantumCircuit) -> ChunkedCircuit:
-    transpiled_qc = transpile(qc, basis_gates=BASIS_GATES, optimization_level=1)
+    transpiled_qc = transpile(qc, basis_gates=SUPPORTED_GATES, optimization_level=1)
     layers = circuit_to_layers(transpiled_qc)
     return ChunkedCircuit(layers_to_chunks(layers), transpiled_qc.global_phase)
 

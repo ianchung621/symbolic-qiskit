@@ -2,7 +2,7 @@ import qiskit.circuit as qcc
 from qiskit import QuantumCircuit
 
 from .base import StandardGate, Barrier, Measurement, QCLayer, StandardGateLayer, BarrierLayer, MeasurementLayer
-from ..gate import BASIS_GATES
+from ..gate import SUPPORTED_GATES
 
 def circuit_to_layers(qc: QuantumCircuit) -> list[QCLayer]:
     layers = []
@@ -51,7 +51,7 @@ def circuit_to_layers(qc: QuantumCircuit) -> list[QCLayer]:
             active_q.update(q_set)
             active_c.update(c_set)
 
-        elif op.name in BASIS_GATES:
+        elif op.name in SUPPORTED_GATES:
             if current_type != 'gate' or (q_set & active_q):
                 flush()
             current_type = 'gate'
@@ -60,7 +60,7 @@ def circuit_to_layers(qc: QuantumCircuit) -> list[QCLayer]:
         elif op.name == 'delay':
             continue
         else:
-            raise ValueError(f"Unsupported operation '{op.name}' in circuit, supported operations: {BASIS_GATES}")
+            raise ValueError(f"Unsupported operation '{op.name}' in circuit, supported operations: {SUPPORTED_GATES}")
 
     flush()
     return layers

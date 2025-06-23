@@ -29,7 +29,7 @@ from .xx_minus_yy import XXMinusYYGate
 from .xx_plus_yy import XXPlusYYGate
 
 
-GATE_REGISTRY = {
+FULL_GATE_REGISTRY = {
     'id': IGate,
     'x': XGate,
     'cx': CXGate,
@@ -87,4 +87,4 @@ GATE_REGISTRY = {
     'xx_plus_yy': XXPlusYYGate
 }
 
-BASIS_GATES = set(GATE_REGISTRY.keys()) & set(get_standard_gate_name_mapping().keys())
+SUPPORTED_GATES = set(FULL_GATE_REGISTRY.keys()) & set(get_standard_gate_name_mapping().keys())
