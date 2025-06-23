@@ -3,4 +3,4 @@
 **/.DS_Store
 notebook/
 scripts/
-test/
+*.egg-info/

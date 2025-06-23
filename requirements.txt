@@ -1,3 +1,6 @@
 numpy
 sympy
 qiskit
+
+pytest
+pytest-cov

@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "symbolic-qiskit"
+version = "0.1.0"
+description = "Symbolic evaluation of Qiskit quantum circuits"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [
+    { name = "Hung-Yen Chung", email = "ianchung621.email@gmail.com" }
+]
+keywords = ["quantum-computing", "qiskit", "symbolic", "sympy"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent"
+]
+dynamic = ["readme", "dependencies"]
+
+[tool.setuptools.dynamic]
+readme = {file = "README.md", content-type = "text/markdown"}
+dependencies = {file = "requirements.txt"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = [".", "src"]
