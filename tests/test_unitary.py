@@ -7,7 +7,7 @@ from symbolic_qiskit import CircuitInspector
 from tests.utils.random import random_unitary_circuit
 from tests.utils.param import generate_parameter_bindings
 
-@given(num_qubits=strategies.integers(min_value=1, max_value=3),
+@given(num_qubits=strategies.integers(min_value=1, max_value=4),
        seed=strategies.integers(min_value=0))
 @settings(deadline=None)
 def test_unitary_circuit(num_qubits, seed):

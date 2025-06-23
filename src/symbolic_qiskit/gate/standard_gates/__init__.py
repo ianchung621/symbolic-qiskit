@@ -1,16 +1,19 @@
 from .i import IGate
-from .x import XGate, CXGate
+from .x import XGate, CXGate, CCXGate
 from .y import YGate, CYGate
-from .z import ZGate, CZGate
+from .z import ZGate, CZGate, CCZGate
 from .h import HGate, CHGate
 from .sx import SXGate, SXdgGate, CSXGate, CSXdgGate
 from .s import SGate, SdgGate, CSGate, CSdgGate
 from .t import TGate, TdgGate, CTGate, CTdgGate
-from .swap import SwapGate
+from .swap import SwapGate, CSWAPGate
 from .iswap import iSwapGate
 from .dcx import DCXGate
 from .ecr import ECRGate
-from .u import UGate, CUGate, U1Gate, CU1Gate, U2Gate, CU2Gate, U3Gate, CU3Gate
+from .u import UGate, CUGate
+from .u1 import U1Gate, CU1Gate
+from .u2 import U2Gate, CU2Gate
+from .u3 import U3Gate, CU3Gate
 from .rx import RXGate, CRXGate
 from .ry import RYGate, CRYGate
 from .rz import RZGate, CRZGate
@@ -19,16 +22,19 @@ from .r import RGate, CRGate
 from .rxx import RXXGate
 from .ryy import RYYGate
 from .rzz import RZZGate
+from .rzx import RZXGate
 
 
 GATE_REGISTRY = {
     'id': IGate,
     'x': XGate,
     'cx': CXGate,
+    'ccx': CCXGate,
     'y': YGate,
     'cy': CYGate,
     'z': ZGate,
     'cz': CZGate,
+    'ccz': CCZGate,
     'h': HGate,
     'ch': CHGate,
     'sx': SXGate,
@@ -44,6 +50,7 @@ GATE_REGISTRY = {
     'ct': CTGate,
     'ctdg': CTdgGate,
     'swap': SwapGate,
+    'cswap': CSWAPGate,
     'iswap': iSwapGate,
     'dcx': DCXGate,
     'ecr': ECRGate,
@@ -68,6 +75,7 @@ GATE_REGISTRY = {
     'rxx': RXXGate,
     'ryy': RYYGate,
     'rzz': RZZGate,
+    'rzx': RZXGate
 }
 
 BASIS_GATES = set(GATE_REGISTRY.keys())
