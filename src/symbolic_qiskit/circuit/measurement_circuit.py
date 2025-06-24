@@ -80,6 +80,35 @@ class MeasurementCircuitBackend(CircuitBackend):
 
         return self._simplify_branches(label) if simplify else self.branches_at_barrier[label]
     
+    def probabilities(self, label: str|None, simplify: bool) -> sp.Matrix:
+        branches = self.branches(label, simplify)
+        bit_prob_map: dict[tuple[int], sp.Expr] = {}
+
+        for b in branches:
+            key = b.measured_bits # (bit0, bit1, ..., bitN) (first -> last qubit measurement outvome)
+            bit_prob_map.setdefault(key, 0)
+            bit_prob_map[key] += b.prob
+
+        keys = list(bit_prob_map.keys())
+        if not keys:
+            raise ValueError("No branches found at label:", label)
+
+        # Check that all key lengths are the same
+        meas_len_set = {len(k) for k in keys}
+        if len(meas_len_set) != 1:
+            raise ValueError("Inconsistent measurement bit lengths across branches")
+
+        N = next(iter(meas_len_set))
+        dim = 2 ** N
+        probs = sp.zeros(dim, 1)
+
+        for bits, p in bit_prob_map.items():
+            bit_str = ''.join(str(bit) for bit in bits)
+            index = int(bit_str, 2)
+            probs[index] = sp.simplify(p) if simplify else p
+
+        return probs
+    
     def simplify(self) -> None:
         for label in self.branches_at_barrier:
             self._simplify_branches(label)

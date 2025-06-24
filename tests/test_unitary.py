@@ -19,7 +19,7 @@ def test_unitary_circuit(num_qubits, seed):
     arr_qiskit = Statevector(pqc.assign_parameters(qc_binding)).data
     # symbolic-qiskit
     final_state = CircuitInspector(pqc).statevector()
-    final_state_data = final_state.subs(sp_binding).evalf().tolist()
+    final_state_data = final_state.subs(sp_binding).evalf()
     arr_symb = np.array(final_state_data, dtype=np.complex128).ravel()
     assert np.allclose(arr_qiskit, arr_symb)
 

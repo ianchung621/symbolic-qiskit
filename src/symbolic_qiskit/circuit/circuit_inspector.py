@@ -65,6 +65,27 @@ class CircuitInspector:
             raise RuntimeError("Circuit has no measurements — use `statevector()` instead.")
         return self.backend.branches(label, simplify)
     
+    def probabilities(self, label: str|None = None, simplify: bool = False) -> sp.Matrix:
+        """
+        Return symbolic measurement probabilities as a column vector.
+
+        ⚠️ IMPORTANT: The index meaning depends on the circuit mode:
+
+        - In **unitary mode**, output Matrix index refers to **qubit order** in circuit:
+            [qubit_{n-1}, ..., qubit_0].
+
+        - In **measurement mode**, output Matrix index refers to **measurement order** in circuit:
+            [first measured qubit, ..., last measured qubit]
+
+        Args:
+            label (str | None): Barrier label to query. If None, returns final output.
+            simplify (bool):  If True, simplify before returning.
+
+        Returns:
+            sp.Matrix: (2^n, 1) column vector of symbolic probabilities.
+        """
+        return self.backend.probabilities(label, simplify)
+    
     def unitary(self, label_start: str = None, label_end: str = None, simplify: bool = False) -> sp.Matrix:
         """
         Compute the symbolic unitary matrix between two barrier labels.

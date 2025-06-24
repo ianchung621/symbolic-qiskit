@@ -61,6 +61,13 @@ class UnitaryCircuitBackend(CircuitBackend):
         
         return self._simplify_state(label) if simplify else self.state_at_barrier[label]
     
+    def probabilities(self, label: str|None, simplify: bool) -> sp.Matrix:
+        psi = self.statevector(label=label, simplify=simplify)
+        probs: sp.Matrix = psi.H.T.multiply_elementwise(psi)
+        if simplify:
+            probs = probs.applyfunc(sp.simplify)
+        return probs
+    
     def simplify(self) -> None:
         for label in self.state_at_barrier:
             self._simplify_state(label)
