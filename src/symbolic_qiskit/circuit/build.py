@@ -10,7 +10,7 @@ def circuit_to_chunks(qc: QuantumCircuit) -> ChunkedCircuit:
     unsupported_gates = {'reset','global_phase'}
     decomposed_qc = decompose_to_standard_gates(qc, supported_gates, unsupported_gates)
     layers = circuit_to_layers(decomposed_qc)
-    return ChunkedCircuit(layers_to_chunks(layers), decomposed_qc.global_phase)
+    return ChunkedCircuit(layers_to_chunks(layers), qc.global_phase)
 
 def decompose_to_standard_gates(
     quantum_circuit: QuantumCircuit,
