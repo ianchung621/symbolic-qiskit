@@ -1,0 +1,22 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "symbolic-qiskit"
+version: 0.1.0
+date-released: 2025-07-01  # or your actual release date
+url: "https://github.com/ianchung621/symbolic-qiskit"
+authors:
+  - family-names: "YourLastName"
+    given-names: "YourFirstName"
+    orcid: "https://orcid.org/your-orcid"  # optional
+keywords: ["qiskit", "symbolic", "quantum", "sympy"]
+license: "Apache-2.0"
+references:
+  - type: software
+    authors:
+      - family-names: "Gasperini"
+        given-names: "Simone"
+        orcid: "https://orcid.org/0000-0003-4454-7131"
+    title: "qiskit-symb"
+    version: "0.4.0"
+    date-released: 2025-01-13
+    url: "https://github.com/SimoneGasperini/qiskit-symb"

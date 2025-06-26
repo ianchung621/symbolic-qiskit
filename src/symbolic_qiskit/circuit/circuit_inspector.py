@@ -122,7 +122,7 @@ class CircuitInspector:
         return self.backend.simplify()
     
     def report(self,
-        label: Literal["*", None] | str,
+        label: Literal["*", None] | str = '*',
         simplify: bool = False,
         output: Literal["auto", "terminal", "notebook"] = 'auto',
         notation: Literal["dirac", "column"] = "column",
