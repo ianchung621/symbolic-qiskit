@@ -7,7 +7,6 @@ url: "https://github.com/ianchung621/symbolic-qiskit"
 authors:
   - family-names: "YourLastName"
     given-names: "YourFirstName"
-    orcid: "https://orcid.org/your-orcid"  # optional
 keywords: ["qiskit", "symbolic", "quantum", "sympy"]
 license: "Apache-2.0"
 references:

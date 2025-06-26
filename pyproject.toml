@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "symbolic-qiskit"
 version = "0.1.0"
-description = "Symbolic evaluation of Qiskit quantum circuits"
+description = "Symbolic simulator for qiskit circuits using sympy backend, supporting mid-circuit measurement and state inspection."
 requires-python = ">=3.9"
 license = { text = "MIT" }
 authors = [
@@ -19,6 +19,13 @@ classifiers = [
 ]
 dynamic = ["readme", "dependencies"]
 
+[project.optional-dependencies]
+test = [
+    "pytest",
+    "hypothesis",
+    "coverage[toml]",
+]
+
 [tool.setuptools.dynamic]
 readme = {file = "README.md", content-type = "text/markdown"}
 dependencies = {file = "requirements.txt"}
@@ -29,3 +36,10 @@ where = ["src"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = [".", "src"]
+
+[tool.coverage.run]
+source = ["symbolic_qiskit"]
+branch = true
+
+[tool.coverage.report]
+show_missing = true

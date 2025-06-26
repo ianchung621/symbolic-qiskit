@@ -6,3 +6,5 @@ scripts/
 *.egg-info/
 .pytest_cache/
 .hypothesis/
+build/
+.coverage
