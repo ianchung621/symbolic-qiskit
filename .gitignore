@@ -7,4 +7,5 @@ scripts/
 .pytest_cache/
 .hypothesis/
 build/
+dist/
 .coverage
