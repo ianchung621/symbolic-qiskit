@@ -1,5 +1,10 @@
 # symbolic-qiskit
 
+[![codecov](https://codecov.io/gh/ianchung621/symbolic-qiskit/branch/main/graph/badge.svg)](https://codecov.io/gh/ianchung621/symbolic-qiskit)
+![Python](https://img.shields.io/badge/python-≥3.10-blue.svg)
+[![Test](https://github.com/ianchung621/symbolic-qiskit/actions/workflows/test.yml/badge.svg)](https://github.com/ianchung621/symbolic-qiskit/actions/workflows/test.yml)
+
+
 Symbolic simulator for [qiskit](https://github.com/Qiskit/qiskit) circuits using [sympy](https://github.com/sympy/sympy) backend, supporting mid-circuit measurement and state inspection.
 
 ## Table of contents

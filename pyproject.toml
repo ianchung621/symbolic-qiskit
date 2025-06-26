@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "symbolic-qiskit"
 version = "0.1.0"
 description = "Symbolic simulator for qiskit circuits using sympy backend, supporting mid-circuit measurement and state inspection."
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 license = { text = "MIT" }
 authors = [
     { name = "Hung-Yen Chung", email = "ianchung621.email@gmail.com" }
