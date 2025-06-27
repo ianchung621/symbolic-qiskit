@@ -12,6 +12,7 @@ permissions:
 jobs:
   build-and-publish:
     runs-on: ubuntu-latest
+    environment: github-actions
 
     steps:
       - uses: actions/checkout@v4
@@ -27,7 +28,7 @@ jobs:
 
       - name: Build the package
         run: |
-          python -m build  # creates dist/*.tar.gz and dist/*.whl
+          python -m build
 
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
