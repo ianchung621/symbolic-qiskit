@@ -149,18 +149,16 @@ Output:
 Just use
 
 ```python
-CircuitInspector(uqc).report()
+CircuitInspector(qc).report()
 ```
 
-It will report all the statevector/branches at all given barriers as well as final output statevector\branches.
+It will report all the statevector/branches at all given barriers as well as final output statevector/branches.
 
-\- Final statevector:
+Example outputs:
 
-![unitary equation final state](docs/equations/unitary/final_state.svg)
+> 🔍 [View unitary report](docs/unitary_report.md)
 
-\- Statevector at embedding:
-
-![unitary equation embedding](docs/equations/unitary/embedding.svg)
+> 🔍 [View measurement report](docs/measurement_report.md)
 
 ## Acknowledgment
 
